@@ -18,7 +18,7 @@ import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
 
 public class WBAuthActivity extends Activity {
-	
+
 	private static final String TAG = "weibosdk";
 
 	/** 显示认证后的信息，如 AccessToken */
@@ -35,7 +35,7 @@ public class WBAuthActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_auth);
-		
+
 		ImageView backgroud = (ImageView) findViewById(R.id.authimage);
 
 		// 快速授权时，请不要传入 SCOPE，否则可能会授权不成功
@@ -52,23 +52,23 @@ public class WBAuthActivity extends Activity {
 				new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int whichButton) {
-//						mSsoHandler.authorizeWeb(new AuthListener());
 						mSsoHandler.authorize(new AuthListener());
+						// mSsoHandler.authorizeWeb(new AuthListener());
 					}
 				});
 		authDialog.create().show();
 	}
-	
+
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        
-        // SSO 授权回调
-        // 重要：发起 SSO 登陆的 Activity 必须重写 onActivityResults
-        if (mSsoHandler != null) {
-            mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
-        }
-        
-    }
+		super.onActivityResult(requestCode, resultCode, data);
+
+		// SSO 授权回调
+		// 重要：发起 SSO 登陆的 Activity 必须重写 onActivityResults
+		if (mSsoHandler != null) {
+			mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+		}
+
+	}
 
 	class AuthListener implements WeiboAuthListener {
 
