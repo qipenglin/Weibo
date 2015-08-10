@@ -33,7 +33,7 @@ public class WBStatusActivity extends Activity {
 
 	ArrayList<Status> statusList;
 
-	private List<Weibo> weiboList = null;
+	private List<Weibo> weiboList;
 
 	private ListView listView;
 
@@ -47,10 +47,6 @@ public class WBStatusActivity extends Activity {
 		mAccessToken = AccessTokenKeeper.readAccessToken(this);
 		mStatusesAPI = new StatusesAPI(this, Constants.APP_KEY, mAccessToken);
 
-		// weiboAdapter = new WeiboAdapter(WBStatusActivity.this, 0, weiboList,
-		// listView);
-		// listView.setAdapter(weiboAdapter);
-
 		if (mAccessToken != null && mAccessToken.isSessionValid()) {
 			mStatusesAPI.friendsTimeline(0L, 0L, 10, 1, false, 0, false,
 					new RequestListener() {
@@ -58,19 +54,15 @@ public class WBStatusActivity extends Activity {
 						public void onComplete(String response) {
 							if (!TextUtils.isEmpty(response)) {
 								LogUtil.i(TAG, response);
-								Toast.makeText(WBStatusActivity.this, response,
-										Toast.LENGTH_LONG).show();
 								statusList = StatusList.parse(response).statusList;
 
-								List<Weibo> weiboList = Utils.Transfer(
+								weiboList = Utils.Transfer(
 										WBStatusActivity.this, statusList);
-								Toast.makeText(WBStatusActivity.this, weiboList.size()+weiboList.get(weiboList.size()-1).getText(),
-										Toast.LENGTH_LONG).show();
 
-								if (!weiboList.isEmpty()) {
-									// weiboAdapter.notifyDataSetChanged();
-								}
-
+							}
+							if (!weiboList.isEmpty()) {
+								weiboAdapter = new WeiboAdapter(WBStatusActivity.this, 0, weiboList, listView);
+								listView.setAdapter(weiboAdapter);
 							}
 						}
 
@@ -83,6 +75,8 @@ public class WBStatusActivity extends Activity {
 						}
 					});
 		}
+
+		
 
 	}
 }
