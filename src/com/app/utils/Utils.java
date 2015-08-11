@@ -23,18 +23,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.Volley;
 import com.app.model.Weibo;
-import com.app.weibo.R;
 import com.sina.weibo.sdk.openapi.models.Status;
 
 /**
@@ -134,17 +126,18 @@ public class Utils {
 //		}
 //		return weiboList;
 //	}
-	
-	public static List<Weibo> Transfer(Context context,ArrayList<Status> statusList) {
-		List<Weibo> weiboList = new ArrayList<Weibo>();
-		Iterator<Status> iterator = statusList.iterator();
-		while (iterator.hasNext()) {
-			String head = iterator.next().user.profile_image_url;
-			String text = iterator.next().text;
-			Weibo weibo = new Weibo(head, text);
-			weiboList.add(weibo);
-		}
-		return weiboList;
-	}
+//	
+//	public static List<Weibo> Transfer(Context context,ArrayList<Status> statusList) {
+//		List<Weibo> weiboList = new ArrayList<Weibo>();
+//		Iterator<Status> iterator = statusList.iterator();
+//		while (iterator.hasNext()) {
+//			Status  status = iterator.next();
+//			String head = status.user.profile_image_url;
+//			String text = status.text;
+//			Weibo weibo = new Weibo(head, text);
+//			weiboList.add(weibo);
+//		}
+//		return weiboList;
+//	}
 
 }

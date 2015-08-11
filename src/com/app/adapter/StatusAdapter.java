@@ -17,6 +17,7 @@ import java.util.Set;
 
 import com.app.model.Weibo;
 import com.app.weibo.R;
+import com.sina.weibo.sdk.openapi.models.Status;
 
 import libcore.io.DiskLruCache;
 import libcore.io.DiskLruCache.Snapshot;
@@ -32,7 +33,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -42,7 +42,7 @@ import android.widget.TextView;
  * 
  * @author guolin
  */
-public class WeiboAdapter extends ArrayAdapter<Weibo> {
+public class StatusAdapter extends ArrayAdapter<Status> {
 
 	/**
 	 * 记录所有正在下载或等待下载的任务。
@@ -64,9 +64,9 @@ public class WeiboAdapter extends ArrayAdapter<Weibo> {
 	 */
 	private ListView mListView;
 
-	public WeiboAdapter(Context context, int textViewResourceId, List<Weibo> weiboList,
+	public StatusAdapter(Context context, int textViewResourceId, List<Status> statusList,
 			ListView listView) {
-		super(context, textViewResourceId, weiboList);
+		super(context, textViewResourceId, statusList);
 		
 		mListView = listView;
 		taskCollection = new HashSet<BitmapWorkerTask>();
@@ -96,9 +96,9 @@ public class WeiboAdapter extends ArrayAdapter<Weibo> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Weibo weibo = getItem(position);
-		String url = weibo.getHead();
-		String text = weibo.getText();
+		Status status = getItem(position);
+		String url = status.user.profile_image_url;
+		String text = status.text;
 		View view;
 		if (convertView == null) {
 			view = LayoutInflater.from(getContext()).inflate(R.layout.weibo_item, null);

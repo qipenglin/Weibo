@@ -1,7 +1,6 @@
 package com.app.activity;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,9 +9,7 @@ import android.view.Window;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.app.adapter.WeiboAdapter;
-import com.app.model.Weibo;
-import com.app.utils.Utils;
+import com.app.adapter.StatusAdapter;
 import com.app.weibo.R;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.exception.WeiboException;
@@ -31,13 +28,11 @@ public class WBStatusActivity extends Activity {
 	/** 用于获取微博信息流等操作的API */
 	private StatusesAPI mStatusesAPI;
 
-	ArrayList<Status> statusList;
-
-	private List<Weibo> weiboList;
+	private ArrayList<Status> statusList;
 
 	private ListView listView;
 
-	private WeiboAdapter weiboAdapter;
+	private StatusAdapter statusAdapter;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,13 +51,10 @@ public class WBStatusActivity extends Activity {
 								LogUtil.i(TAG, response);
 								statusList = StatusList.parse(response).statusList;
 
-								weiboList = Utils.Transfer(
-										WBStatusActivity.this, statusList);
-
 							}
-							if (!weiboList.isEmpty()) {
-								weiboAdapter = new WeiboAdapter(WBStatusActivity.this, 0, weiboList, listView);
-								listView.setAdapter(weiboAdapter);
+							if (!statusList.isEmpty()) {
+								statusAdapter = new StatusAdapter(WBStatusActivity.this, 0, statusList, listView);
+								listView.setAdapter(statusAdapter);
 							}
 						}
 
