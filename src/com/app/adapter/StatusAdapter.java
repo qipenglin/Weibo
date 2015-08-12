@@ -11,13 +11,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import com.app.model.Weibo;
-import com.app.weibo.R;
-import com.sina.weibo.sdk.openapi.models.Status;
+import java.util.zip.Inflater;
 
 import libcore.io.DiskLruCache;
 import libcore.io.DiskLruCache.Snapshot;
@@ -33,9 +31,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.app.weibo.R;
+import com.sina.weibo.sdk.openapi.models.Status;
 
 /**
  * GridView的适配器，负责异步从网络上下载图片展示在照片墙上。
@@ -97,21 +99,35 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		Status status = getItem(position);
-		String url = status.user.profile_image_url;
-		String text = status.text;
+		
+		String profile_image_url = status.user.profile_image_url;
+		String user_name = status.user.name;
+		String creat_at = status.created_at;
+
+		String content_text = status.text;
+		ArrayList<String> pic_urls = status.pic_urls;
 		View view;
 		if (convertView == null) {
-			view = LayoutInflater.from(getContext()).inflate(R.layout.weibo_item, null);
+			view = LayoutInflater.from(getContext()).inflate(R.layout.status_item, null);
 		} else {
 			view = convertView;
 		}
-		final ImageView imageView = (ImageView) view.findViewById(R.id.content_head);
-		final TextView textView = (TextView)view.findViewById(R.id.content_text);
-		textView.setText(text);
-		// 给ImageView设置一个Tag，保证异步加载图片时不会乱序
-		imageView.setTag(url);
-		imageView.setImageResource(R.drawable.ic_launcher);
-		loadBitmaps(imageView, url);
+		
+		ImageView profile_image_imageView = (ImageView) view.findViewById(R.id.content_head);
+		TextView user_name_textView = (TextView)view.findViewById(R.id.user_name);
+		TextView creat_at_textView = (TextView)view.findViewById(R.id.publish_time);
+		TextView text_textView = (TextView)view.findViewById(R.id.content_text);
+//		LayoutInflater inflater = new LayoutInflater();
+//		
+//		view gridView = inflater.inflate(R.id.gridView);
+		loadBitmaps(profile_image_imageView, profile_image_url);
+		profile_image_imageView.setTag(profile_image_url);
+//		profile_image_imageView.setImageResource(R.drawable.ic_launcher);
+		
+		user_name_textView.setText(user_name);
+		creat_at_textView.setText(creat_at);
+		text_textView.setText(content_text);
+		
 		return view;
 	}
 

@@ -66,8 +66,11 @@ public final class R {
     public static final class id {
         public static final int authimage=0x7f080000;
         public static final int content_head=0x7f080003;
-        public static final int content_text=0x7f080004;
+        public static final int content_text=0x7f080006;
+        public static final int gridView=0x7f080007;
         public static final int loadimage=0x7f080001;
+        public static final int publish_time=0x7f080005;
+        public static final int user_name=0x7f080004;
         public static final int weibo_list=0x7f080002;
     }
     public static final class layout {
@@ -79,7 +82,7 @@ public final class R {
         public static final int me_layout=0x7f030005;
         public static final int message_layout=0x7f030006;
         public static final int send_layout=0x7f030007;
-        public static final int weibo_item=0x7f030008;
+        public static final int status_item=0x7f030008;
     }
     public static final class string {
         public static final int app_name=0x7f050003;
