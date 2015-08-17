@@ -24,6 +24,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.app.utils.AccessTokenKeeper;
 import com.app.utils.Utils;
 import com.app.weibo.R;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -46,7 +47,7 @@ public class LoadActivity extends Activity {
 		ImageView loadImage = (ImageView) findViewById(R.id.loadimage);
 		AlphaAnimation animation = new AlphaAnimation(0.1f, 1.0f);
 		// 动画持续时间
-		animation.setDuration(1000);
+		animation.setDuration(200);
 		// 动画绑定到ImageView组件上执行
 		loadImage.setAnimation(animation);
 		animation.setAnimationListener(new AnimationListener() {
@@ -75,7 +76,7 @@ public class LoadActivity extends Activity {
 					finish();
 				} else {
 					startActivity(new Intent(LoadActivity.this,
-							WBStatusActivity.class));
+							MainActivity.class));
 					finish();
 				}
 			}

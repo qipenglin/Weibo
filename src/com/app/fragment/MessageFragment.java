@@ -10,11 +10,12 @@ import com.app.weibo.R;
 
 public class MessageFragment extends Fragment {
 
+	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View messageLayout = inflater.inflate(R.layout.message_layout,
+		View contactsLayout = inflater.inflate(R.layout.message_layout,
 				container, false);
-		return messageLayout;
+		return contactsLayout;
 	}
 
 }

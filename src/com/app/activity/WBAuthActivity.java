@@ -10,6 +10,8 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.app.utils.AccessTokenKeeper;
+import com.app.utils.Constants;
 import com.app.weibo.R;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
@@ -36,8 +38,6 @@ public class WBAuthActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_auth);
 
-		ImageView backgroud = (ImageView) findViewById(R.id.authimage);
-
 		// 快速授权时，请不要传入 SCOPE，否则可能会授权不成功
 		mAuthInfo = new AuthInfo(this, Constants.APP_KEY,
 				Constants.REDIRECT_URL, Constants.SCOPE);
@@ -61,7 +61,6 @@ public class WBAuthActivity extends Activity {
 
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-
 		// SSO 授权回调
 		// 重要：发起 SSO 登陆的 Activity 必须重写 onActivityResults
 		if (mSsoHandler != null) {
@@ -85,7 +84,7 @@ public class WBAuthActivity extends Activity {
 				Toast.makeText(WBAuthActivity.this, "认证成功", Toast.LENGTH_SHORT)
 						.show();
 				startActivity(new Intent(WBAuthActivity.this,
-						WBStatusActivity.class));
+						MainActivity.class));
 				finish();
 			} else {
 				// 以下几种情况，您会收到 Code：

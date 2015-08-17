@@ -14,10 +14,6 @@
 
 package com.app.utils;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -25,9 +21,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
-import com.app.model.Weibo;
-import com.sina.weibo.sdk.openapi.models.Status;
 
 /**
  * 官网 www.facejava.org www.fkjava.org 学习交流论坛 www.crazyit.org
@@ -98,46 +91,5 @@ public class Utils {
 		}
 		return false;
 	}
-
-//	public static ArrayList<Weibo> Transfer(Context context,
-//			ArrayList<Status> statusList) {
-//
-//		final RequestQueue mQueue = Volley.newRequestQueue(context);
-//		final ArrayList<Weibo> weiboList = new ArrayList<Weibo>();
-//		final Iterator<Status> iterator = statusList.iterator();
-//		while (iterator.hasNext()) {
-//			String head_url = iterator.next().user.profile_image_url;
-//			ImageRequest imageRequest = new ImageRequest(head_url,
-//					new Response.Listener<Bitmap>() {
-//						@Override
-//						public void onResponse(Bitmap response) {
-//							Weibo weibo = new Weibo(response, iterator.next().text);
-//							weiboList.add(weibo);
-//
-//						}
-//					}, 0, 0, Config.RGB_565, new Response.ErrorListener() {
-//						@Override
-//						public void onErrorResponse(VolleyError error) {
-//							Weibo weibo = new Weibo(null, iterator.next().text);
-//							weiboList.add(weibo);
-//						}
-//					});
-//			mQueue.add(imageRequest);
-//		}
-//		return weiboList;
-//	}
-//	
-//	public static List<Weibo> Transfer(Context context,ArrayList<Status> statusList) {
-//		List<Weibo> weiboList = new ArrayList<Weibo>();
-//		Iterator<Status> iterator = statusList.iterator();
-//		while (iterator.hasNext()) {
-//			Status  status = iterator.next();
-//			String head = status.user.profile_image_url;
-//			String text = status.text;
-//			Weibo weibo = new Weibo(head, text);
-//			weiboList.add(weibo);
-//		}
-//		return weiboList;
-//	}
 
 }

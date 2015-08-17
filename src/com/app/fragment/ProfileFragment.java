@@ -1,21 +1,21 @@
 package com.app.fragment;
 
+import com.app.weibo.R;
+
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.app.weibo.R;
-
-public class MeFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		View meLayout = inflater.inflate(R.layout.me_layout, container,
-				false);
-		return meLayout;
+		View settingLayout = inflater.inflate(R.layout.profile_layout,
+				container, false);
+		return settingLayout;
 	}
 
 }

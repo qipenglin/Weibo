@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.app.activity;
+package com.app.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
