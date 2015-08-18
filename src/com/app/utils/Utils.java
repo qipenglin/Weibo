@@ -14,11 +14,26 @@
 
 package com.app.utils;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.sql.Connection;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import org.litepal.tablemanager.Connector;
+
+import com.app.model.MyUser;
+import com.sina.weibo.sdk.openapi.models.User;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
@@ -41,26 +56,20 @@ public class Utils {
 			dialog.setTitle("网络状况检查");
 			dialog.setMessage("无网络连接");
 			dialog.setCancelable(false);
-			dialog.setPositiveButton("去设置",
-					new DialogInterface.OnClickListener() {
-						@Override
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							// 设置完毕会返回当前应用
-							context.startActivityForResult(
-									new Intent(
-											android.provider.Settings.ACTION_WIRELESS_SETTINGS),
-									0);
-						}
-					});
-			dialog.setNegativeButton("退出",
-					new DialogInterface.OnClickListener() {
+			dialog.setPositiveButton("去设置", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int whichButton) {
+					// 设置完毕会返回当前应用
+					context.startActivityForResult(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS), 0);
+				}
+			});
+			dialog.setNegativeButton("退出", new DialogInterface.OnClickListener() {
 
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							context.finish();
-						}
-					});
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					context.finish();
+				}
+			});
 			dialog.create().show();
 
 		}
@@ -75,8 +84,7 @@ public class Utils {
 	 * @return true 表示有网络连接 false表示没有可用网络连接
 	 */
 	public static boolean isNetworkAvailable(Context context) {
-		ConnectivityManager connectivity = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		if (connectivity == null) {
 			return false;
 		} else {
@@ -92,4 +100,48 @@ public class Utils {
 		return false;
 	}
 
+//	public static final SQLiteDatabase db = Connector.getDatabase();
+//
+//	public static void SaveUserToDatabase(User user) {
+//		
+//		MyUser myUser = new MyUser(user);
+//		myUser.save();
+//	}
+
+	public static void sendHttpRequest(final String address, final HttpCallbackListener listener) {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				HttpURLConnection connection = null;
+				try {
+					URL url = new URL(address);
+					connection = (HttpsURLConnection) url.openConnection();
+					connection.setRequestMethod("Get");
+					connection.setReadTimeout(8000);
+					connection.setDoInput(true);
+					connection.setDoOutput(true);
+					InputStream in = connection.getInputStream();
+					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+					StringBuilder response = new StringBuilder();
+					String line;
+					while ((line = reader.readLine()) != null) {
+						response.append(line);
+					}
+					if (listener != null) {
+						listener.onFinish(response.toString());
+					}
+
+				} catch (Exception e) {
+					if (listener != null) {
+						listener.onError(e);
+					}
+				} finally {
+					if (connection != null) {
+						connection.disconnect();
+					}
+				}
+			}
+		}).start();
+
+	}
 }
