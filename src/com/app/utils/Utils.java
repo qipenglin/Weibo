@@ -25,7 +25,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 import org.litepal.tablemanager.Connector;
 
-import com.app.model.MyUser;
+import com.app.model.UserInfo;
 import com.sina.weibo.sdk.openapi.models.User;
 
 import android.app.Activity;
@@ -104,7 +104,7 @@ public class Utils {
 //
 //	public static void SaveUserToDatabase(User user) {
 //		
-//		MyUser myUser = new MyUser(user);
+//		UserInfo myUser = new UserInfo(user);
 //		myUser.save();
 //	}
 
@@ -117,6 +117,7 @@ public class Utils {
 					URL url = new URL(address);
 					connection = (HttpsURLConnection) url.openConnection();
 					connection.setRequestMethod("Get");
+					connection.setReadTimeout(8000);
 					connection.setReadTimeout(8000);
 					connection.setDoInput(true);
 					connection.setDoOutput(true);

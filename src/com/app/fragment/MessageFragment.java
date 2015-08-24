@@ -6,12 +6,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.litepal.crud.DataSupport;
 import org.litepal.tablemanager.Connector;
 
-import com.app.model.MyUser;
+import com.app.model.UserInfo;
 import com.app.weibo.R;
 
 public class MessageFragment extends Fragment {
@@ -21,9 +22,7 @@ public class MessageFragment extends Fragment {
 			Bundle savedInstanceState) {
 		View contactsLayout = inflater.inflate(R.layout.message_layout,
 				container, false);
-		
-		
-		MyUser user = DataSupport.findFirst(MyUser.class);
+		UserInfo user = DataSupport.findFirst(UserInfo.class);
 		Toast.makeText(getActivity(), user.getScreen_name(),Toast.LENGTH_LONG).show();
 		return contactsLayout;
 	}

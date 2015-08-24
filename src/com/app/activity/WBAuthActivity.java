@@ -4,12 +4,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import org.litepal.tablemanager.Connector;
+
+import com.app.model.UserInfo;
 import com.app.utils.AccessTokenKeeper;
 import com.app.utils.Constants;
 import com.app.weibo.R;
@@ -18,6 +22,10 @@ import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
+import com.sina.weibo.sdk.net.RequestListener;
+import com.sina.weibo.sdk.openapi.UsersAPI;
+import com.sina.weibo.sdk.openapi.models.ErrorInfo;
+import com.sina.weibo.sdk.openapi.models.User;
 
 public class WBAuthActivity extends Activity {
 
@@ -39,23 +47,20 @@ public class WBAuthActivity extends Activity {
 		setContentView(R.layout.activity_auth);
 
 		// 快速授权时，请不要传入 SCOPE，否则可能会授权不成功
-		mAuthInfo = new AuthInfo(this, Constants.APP_KEY,
-				Constants.REDIRECT_URL, Constants.SCOPE);
+		mAuthInfo = new AuthInfo(this, Constants.APP_KEY, Constants.REDIRECT_URL, Constants.SCOPE);
 		mSsoHandler = new SsoHandler(WBAuthActivity.this, mAuthInfo);
 
-		AlertDialog.Builder authDialog = new AlertDialog.Builder(
-				WBAuthActivity.this);
+		AlertDialog.Builder authDialog = new AlertDialog.Builder(WBAuthActivity.this);
 		authDialog.setTitle("请求授权");
 		authDialog.setMessage("是否进行授权");
 		authDialog.setCancelable(false);
-		authDialog.setPositiveButton("是",
-				new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int whichButton) {
-						mSsoHandler.authorize(new AuthListener());
-						// mSsoHandler.authorizeWeb(new AuthListener());
-					}
-				});
+		authDialog.setPositiveButton("是", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int whichButton) {
+				mSsoHandler.authorize(new AuthListener());
+				// mSsoHandler.authorizeWeb(new AuthListener());
+			}
+		});
 		authDialog.create().show();
 	}
 
@@ -79,13 +84,12 @@ public class WBAuthActivity extends Activity {
 			String phoneNum = mAccessToken.getPhoneNum();
 			if (mAccessToken.isSessionValid()) {
 				// 保存 Token 到 SharedPreferences
-				AccessTokenKeeper.writeAccessToken(WBAuthActivity.this,
-						mAccessToken);
-				Toast.makeText(WBAuthActivity.this, "认证成功", Toast.LENGTH_SHORT)
-						.show();
-				startActivity(new Intent(WBAuthActivity.this,
-						MainActivity.class));
-				finish();
+				AccessTokenKeeper.writeAccessToken(WBAuthActivity.this, mAccessToken);
+				UsersAPI mUsersAPI = new UsersAPI(WBAuthActivity.this, Constants.APP_KEY, mAccessToken);
+				long uid = Long.parseLong(mAccessToken.getUid());
+				mUsersAPI.show(uid, mListener);
+				Toast.makeText(WBAuthActivity.this, "认证成功", Toast.LENGTH_SHORT).show();
+				startActivity(new Intent(WBAuthActivity.this, MainActivity.class));
 			} else {
 				// 以下几种情况，您会收到 Code：
 				// 1. 当您未在平台上注册的应用程序的包名与签名时；
@@ -96,23 +100,43 @@ public class WBAuthActivity extends Activity {
 				if (!TextUtils.isEmpty(code)) {
 					message = message + "\nObtained the code: " + code;
 				}
-				Toast.makeText(WBAuthActivity.this, message, Toast.LENGTH_LONG)
-						.show();
+				Toast.makeText(WBAuthActivity.this, message, Toast.LENGTH_LONG).show();
 			}
 		}
 
 		@Override
 		public void onCancel() {
-			Toast.makeText(WBAuthActivity.this, "cancel", Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(WBAuthActivity.this, "cancel", Toast.LENGTH_LONG).show();
 		}
 
 		@Override
 		public void onWeiboException(WeiboException e) {
-			Toast.makeText(WBAuthActivity.this,
-					"Auth exception : " + e.getMessage(), Toast.LENGTH_LONG)
-					.show();
+			Toast.makeText(WBAuthActivity.this, "Auth exception : " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 	}
+
+	private RequestListener mListener = new RequestListener() {
+		@Override
+		public void onComplete(String response) {
+			if (!TextUtils.isEmpty(response)) {
+				// 调用 User#parse 将JSON串解析成User对象
+				User user = User.parse(response);
+				if (user != null) {
+					SQLiteDatabase db = Connector.getDatabase();
+					if (db != null) {
+						UserInfo mUserInfo = new UserInfo(user);
+						mUserInfo.save();
+						finish();
+					}
+				}
+			}
+		}
+
+		@Override
+		public void onWeiboException(WeiboException e) {
+			ErrorInfo info = ErrorInfo.parse(e.getMessage());
+			Toast.makeText(WBAuthActivity.this, info.toString(), Toast.LENGTH_LONG).show();
+		}
+	};
 
 }

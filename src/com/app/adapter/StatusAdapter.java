@@ -11,14 +11,13 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.Inflater;
 
-import libcore.io.DiskLruCache;
-import libcore.io.DiskLruCache.Snapshot;
+import com.app.weibo.R;
+import com.sina.weibo.sdk.openapi.models.Status;
+
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -31,14 +30,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.app.weibo.R;
-import com.sina.weibo.sdk.openapi.models.Status;
+import libcore.io.DiskLruCache;
+import libcore.io.DiskLruCache.Snapshot;
 
 /**
  * GridView的适配器，负责异步从网络上下载图片展示在照片墙上。
@@ -67,12 +63,11 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 	 */
 	private ListView mListView;
 
-
-	public StatusAdapter(Context context, int textViewResourceId,
-			List<Status> statusList, ListView listView) {
+	public StatusAdapter(Context context, int textViewResourceId, List<Status> statusList, ListView listView) {
 		super(context, textViewResourceId, statusList);
 
 		mListView = listView;
+
 		taskCollection = new HashSet<BitmapWorkerTask>();
 		// 获取应用程序最大可用内存
 		int maxMemory = (int) Runtime.getRuntime().maxMemory();
@@ -91,8 +86,7 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 				cacheDir.mkdirs();
 			}
 			// 创建DiskLruCache实例，初始化缓存数据
-			mDiskLruCache = DiskLruCache.open(cacheDir, getAppVersion(context),
-					1, 10 * 1024 * 1024);
+			mDiskLruCache = DiskLruCache.open(cacheDir, getAppVersion(context), 1, 10 * 1024 * 1024);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -110,20 +104,15 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 		List<String> pic_urls = status.pic_urls;
 		View view;
 		if (convertView == null) {
-			view = LayoutInflater.from(getContext()).inflate(
-					R.layout.status_item, null);
+			view = LayoutInflater.from(getContext()).inflate(R.layout.status_item, null);
 		} else {
 			view = convertView;
 		}
 
-		ImageView profile_image_imageView = (ImageView) view
-				.findViewById(R.id.content_head);
-		TextView user_name_textView = (TextView) view
-				.findViewById(R.id.user_name);
-		TextView creat_at_textView = (TextView) view
-				.findViewById(R.id.publish_time);
-		TextView text_textView = (TextView) view
-				.findViewById(R.id.content_text);
+		ImageView profile_image_imageView = (ImageView) view.findViewById(R.id.content_head);
+		TextView user_name_textView = (TextView) view.findViewById(R.id.user_name);
+		TextView creat_at_textView = (TextView) view.findViewById(R.id.publish_time);
+		TextView text_textView = (TextView) view.findViewById(R.id.content_text);
 
 		loadBitmaps(profile_image_imageView, profile_image_url);
 		profile_image_imageView.setTag(profile_image_url);
@@ -131,9 +120,11 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 		creat_at_textView.setText(creat_at);
 		text_textView.setText(content_text);
 
-//		GridView gridView = (GridView) view.findViewById(R.id.content_pic);
-//		PictureAdapter pictureAdapter = new PictureAdapter(getContext(), 0, pic_urls, gridView);
-//		gridView.setAdapter(pictureAdapter);
+		// NoScrollGridView gridView = (NoScrollGridView)
+		// view.findViewById(R.id.content_pic);
+		// PictureAdapter pictureAdapter = new PictureAdapter(getContext(), 0,
+		// pic_urls, gridView);
+		// gridView.setAdapter(pictureAdapter);
 
 		return view;
 	}
@@ -200,8 +191,7 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 	 */
 	public File getDiskCacheDir(Context context, String uniqueName) {
 		String cachePath;
-		if (Environment.MEDIA_MOUNTED.equals(Environment
-				.getExternalStorageState())
+		if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
 				|| !Environment.isExternalStorageRemovable()) {
 			cachePath = context.getExternalCacheDir().getPath();
 		} else {
@@ -215,8 +205,7 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 	 */
 	public int getAppVersion(Context context) {
 		try {
-			PackageInfo info = context.getPackageManager().getPackageInfo(
-					context.getPackageName(), 0);
+			PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
 			return info.versionCode;
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
@@ -224,20 +213,6 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 		return 1;
 	}
 
-	// /**
-	// * 设置item子项的高度。
-	// */
-	// public void setItemHeight(int height) {
-	// if (height == mItemHeight) {
-	// return;
-	// }
-	// mItemHeight = height;
-	// notifyDataSetChanged();
-	// }
-
-	/**
-	 * 使用MD5算法对传入的key进行加密并返回。
-	 */
 	public String hashKeyForDisk(String key) {
 		String cacheKey;
 		try {
@@ -313,8 +288,7 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 					snapShot = mDiskLruCache.get(key);
 				}
 				if (snapShot != null) {
-					fileInputStream = (FileInputStream) snapShot
-							.getInputStream(0);
+					fileInputStream = (FileInputStream) snapShot.getInputStream(0);
 					fileDescriptor = fileInputStream.getFD();
 				}
 				// 将缓存数据解析成Bitmap对象
@@ -344,8 +318,7 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 		protected void onPostExecute(Bitmap bitmap) {
 			super.onPostExecute(bitmap);
 			// 根据Tag找到相应的ImageView控件，将下载好的图片显示出来。
-			ImageView imageView = (ImageView) mListView
-					.findViewWithTag(imageUrl);
+			ImageView imageView = (ImageView) mListView.findViewWithTag(imageUrl);
 			if (imageView != null && bitmap != null) {
 				imageView.setImageBitmap(bitmap);
 			}
@@ -359,16 +332,14 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 		 *            图片的URL地址
 		 * @return 解析后的Bitmap对象
 		 */
-		private boolean downloadUrlToStream(String urlString,
-				OutputStream outputStream) {
+		private boolean downloadUrlToStream(String urlString, OutputStream outputStream) {
 			HttpURLConnection urlConnection = null;
 			BufferedOutputStream out = null;
 			BufferedInputStream in = null;
 			try {
 				final URL url = new URL(urlString);
 				urlConnection = (HttpURLConnection) url.openConnection();
-				in = new BufferedInputStream(urlConnection.getInputStream(),
-						8 * 1024);
+				in = new BufferedInputStream(urlConnection.getInputStream(), 8 * 1024);
 				out = new BufferedOutputStream(outputStream, 8 * 1024);
 				int b;
 				while ((b = in.read()) != -1) {

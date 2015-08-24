@@ -1,34 +1,21 @@
 package com.app.activity;
 
-import org.litepal.tablemanager.Connector;
-
 import com.app.fragment.DiscoverFragment;
 import com.app.fragment.HomeFragment;
 import com.app.fragment.MessageFragment;
 import com.app.fragment.ProfileFragment;
-import com.app.utils.AccessTokenKeeper;
-import com.app.utils.Constants;
-import com.app.utils.Utils;
 import com.app.weibo.R;
-import com.sina.weibo.sdk.auth.Oauth2AccessToken;
-import com.sina.weibo.sdk.exception.WeiboException;
-import com.sina.weibo.sdk.net.RequestListener;
-import com.sina.weibo.sdk.openapi.UsersAPI;
-import com.sina.weibo.sdk.openapi.models.ErrorInfo;
-import com.sina.weibo.sdk.openapi.models.User;
 
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * 项目的主Activity，所有的Fragment都嵌入在这里。
@@ -122,12 +109,10 @@ public class MainActivity extends Activity implements OnClickListener {
 	 */
 	private FragmentManager fragmentManager;
 
-
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		// requestWindowFeature(Window.FEATURE_NO_TITLE);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		// 初始化布局元素
 		initViews();
@@ -135,10 +120,9 @@ public class MainActivity extends Activity implements OnClickListener {
 		// 第一次启动时选中第0个tab
 		setTabSelection(0);
 		// 获取当前已保存过的 Token
-		
+
 	}
 
-	
 	// @Override
 	// public boolean onCreateOptionsMenu(Menu menu) {
 	// // 为ActionBar扩展菜单项
