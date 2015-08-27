@@ -42,6 +42,7 @@ public class HomeFragment extends Fragment {
 	@Override
 	public void onAttach(final Activity activity) {
 		super.onAttach(activity);
+		
 
 	}
 

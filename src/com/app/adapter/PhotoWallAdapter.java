@@ -11,12 +11,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import libcore.io.DiskLruCache;
-import libcore.io.DiskLruCache.Snapshot;
+import com.app.weibo.R;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -31,16 +31,15 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-
-import com.app.view.NoScrollGridView;
-import com.app.weibo.R;
+import libcore.io.DiskLruCache;
+import libcore.io.DiskLruCache.Snapshot;
 
 /**
  * GridView的适配器，负责异步从网络上下载图片展示在照片墙上。
  * 
  * @author guolin
  */
-public class PictureAdapter extends ArrayAdapter<String> {
+public class PhotoWallAdapter extends ArrayAdapter<String> {
 
 	/**
 	 * 记录所有正在下载或等待下载的任务。
@@ -60,14 +59,17 @@ public class PictureAdapter extends ArrayAdapter<String> {
 	/**
 	 * GridView的实例
 	 */
-	private NoScrollGridView mGridView;
+	private GridView mPhotoWall;
 
+	/**
+	 * 记录每个子项的高度。
+	 */
 	private int mItemHeight = 0;
 
-	public PictureAdapter(Context context, int textViewResourceId, List<String> picList, NoScrollGridView gridView) {
-		super(context, textViewResourceId, picList);
-
-		mGridView = gridView;
+	public PhotoWallAdapter(Context context, int textViewResourceId, ArrayList<String> objects,
+			GridView photoWall) {
+		super(context, textViewResourceId, objects);
+		mPhotoWall = photoWall;
 		taskCollection = new HashSet<BitmapWorkerTask>();
 		// 获取应用程序最大可用内存
 		int maxMemory = (int) Runtime.getRuntime().maxMemory();
@@ -86,25 +88,31 @@ public class PictureAdapter extends ArrayAdapter<String> {
 				cacheDir.mkdirs();
 			}
 			// 创建DiskLruCache实例，初始化缓存数据
-			mDiskLruCache = DiskLruCache.open(cacheDir, getAppVersion(context), 1, 10 * 1024 * 1024);
+			mDiskLruCache = DiskLruCache
+					.open(cacheDir, getAppVersion(context), 1, 10 * 1024 * 1024);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	@SuppressLint("ViewHolder")
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		String pic_url = getItem(position);
-		View view;
-		if (convertView == null) {
-			view = LayoutInflater.from(getContext()).inflate(R.layout.content_pic_item, null);
-		} else {
-			view = convertView;
+		String url = getItem(position);
+		View view = LayoutInflater.from(getContext()).inflate(R.layout.photo_layout, null);
+//		if (convertView == null) {
+//			view = LayoutInflater.from(getContext()).inflate(R.layout.photo_layout, null);
+//		} else {
+//			view = convertView;
+//		}
+		final ImageView imageView = (ImageView) view.findViewById(R.id.photo);
+		if (imageView.getLayoutParams().height != mItemHeight) {
+			imageView.getLayoutParams().height = mItemHeight;
 		}
-
-		ImageView imageView = (ImageView) view.findViewById(R.id.photo);
-		imageView.setTag(pic_url);
-		loadBitmaps(imageView, pic_url);
+		// 给ImageView设置一个Tag，保证异步加载图片时不会乱序
+		imageView.setTag(url);
+		imageView.setImageResource(R.drawable.empty_photo);
+		loadBitmaps(imageView, url);
 		return view;
 	}
 
@@ -184,7 +192,8 @@ public class PictureAdapter extends ArrayAdapter<String> {
 	 */
 	public int getAppVersion(Context context) {
 		try {
-			PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+			PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(),
+					0);
 			return info.versionCode;
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
@@ -217,7 +226,7 @@ public class PictureAdapter extends ArrayAdapter<String> {
 		}
 		return cacheKey;
 	}
-
+	
 	/**
 	 * 将缓存记录同步到journal文件中。
 	 */
@@ -311,7 +320,7 @@ public class PictureAdapter extends ArrayAdapter<String> {
 		protected void onPostExecute(Bitmap bitmap) {
 			super.onPostExecute(bitmap);
 			// 根据Tag找到相应的ImageView控件，将下载好的图片显示出来。
-			ImageView imageView = (ImageView) mGridView.findViewWithTag(imageUrl);
+			ImageView imageView = (ImageView) mPhotoWall.findViewWithTag(imageUrl);
 			if (imageView != null && bitmap != null) {
 				imageView.setImageBitmap(bitmap);
 			}

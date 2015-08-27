@@ -32,7 +32,7 @@ import org.litepal.tablemanager.Connector;
 import com.app.model.UserInfo;
 import com.app.utils.AccessTokenKeeper;
 import com.app.utils.Constants;
-import com.app.utils.Utils;
+import com.app.utils.NetworkChekingUtils;
 import com.app.weibo.R;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.exception.WeiboException;
@@ -104,7 +104,7 @@ public class LoadActivity extends Activity {
 	
 
 	public void init() {
-		Utils.checkNetwork(this);
+		NetworkChekingUtils.checkNetwork(this);
 	}
 
 }

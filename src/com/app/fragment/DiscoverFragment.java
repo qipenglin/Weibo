@@ -4,7 +4,7 @@ import com.app.utils.AccessTokenKeeper;
 import com.app.utils.Constants;
 import com.app.utils.HttpCallbackListener;
 import com.app.utils.HttpUtil;
-import com.app.utils.Utils;
+import com.app.utils.NetworkChekingUtils;
 import com.app.weibo.R;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 

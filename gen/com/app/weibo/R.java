@@ -29,6 +29,8 @@ public final class R {
         public static final int com_sina_weibo_sdk_loginview_padding_right=0x7f040005;
         public static final int com_sina_weibo_sdk_loginview_padding_top=0x7f040006;
         public static final int com_sina_weibo_sdk_loginview_text_size=0x7f040002;
+        public static final int image_thumbnail_size=0x7f040009;
+        public static final int image_thumbnail_spacing=0x7f04000a;
     }
     public static final class drawable {
         public static final int com_sina_weibo_sdk_button_blue=0x7f020000;
@@ -40,33 +42,34 @@ public final class R {
         public static final int contacts_unselected=0x7f020006;
         public static final int discover_selected=0x7f020007;
         public static final int discover_unselected=0x7f020008;
-        public static final int home_selected=0x7f020009;
-        public static final int home_unselected=0x7f02000a;
-        public static final int ic_com_sina_weibo_sdk_button_blue_focused=0x7f02000b;
-        public static final int ic_com_sina_weibo_sdk_button_blue_normal=0x7f02000c;
-        public static final int ic_com_sina_weibo_sdk_button_blue_pressed=0x7f02000d;
-        public static final int ic_com_sina_weibo_sdk_button_grey_focused=0x7f02000e;
-        public static final int ic_com_sina_weibo_sdk_button_grey_normal=0x7f02000f;
-        public static final int ic_com_sina_weibo_sdk_button_grey_pressed=0x7f020010;
-        public static final int ic_com_sina_weibo_sdk_login_button_with_frame_logo_focused=0x7f020011;
-        public static final int ic_com_sina_weibo_sdk_login_button_with_frame_logo_normal=0x7f020012;
-        public static final int ic_com_sina_weibo_sdk_login_button_with_frame_logo_pressed=0x7f020013;
-        public static final int ic_com_sina_weibo_sdk_login_with_account_text_focused=0x7f020014;
-        public static final int ic_com_sina_weibo_sdk_login_with_account_text_normal=0x7f020015;
-        public static final int ic_com_sina_weibo_sdk_login_with_account_text_pressed=0x7f020016;
-        public static final int ic_com_sina_weibo_sdk_login_with_text=0x7f020017;
-        public static final int ic_com_sina_weibo_sdk_logo=0x7f020018;
-        public static final int ic_launcher=0x7f020019;
-        public static final int load=0x7f02001a;
-        public static final int message_selected=0x7f02001b;
-        public static final int message_unselected=0x7f02001c;
-        public static final int news_selected=0x7f02001d;
-        public static final int news_unselected=0x7f02001e;
-        public static final int profile_selected=0x7f02001f;
-        public static final int profile_unselected=0x7f020020;
-        public static final int setting_selected=0x7f020021;
-        public static final int setting_unselected=0x7f020022;
-        public static final int tab_bg=0x7f020023;
+        public static final int empty_photo=0x7f020009;
+        public static final int home_selected=0x7f02000a;
+        public static final int home_unselected=0x7f02000b;
+        public static final int ic_com_sina_weibo_sdk_button_blue_focused=0x7f02000c;
+        public static final int ic_com_sina_weibo_sdk_button_blue_normal=0x7f02000d;
+        public static final int ic_com_sina_weibo_sdk_button_blue_pressed=0x7f02000e;
+        public static final int ic_com_sina_weibo_sdk_button_grey_focused=0x7f02000f;
+        public static final int ic_com_sina_weibo_sdk_button_grey_normal=0x7f020010;
+        public static final int ic_com_sina_weibo_sdk_button_grey_pressed=0x7f020011;
+        public static final int ic_com_sina_weibo_sdk_login_button_with_frame_logo_focused=0x7f020012;
+        public static final int ic_com_sina_weibo_sdk_login_button_with_frame_logo_normal=0x7f020013;
+        public static final int ic_com_sina_weibo_sdk_login_button_with_frame_logo_pressed=0x7f020014;
+        public static final int ic_com_sina_weibo_sdk_login_with_account_text_focused=0x7f020015;
+        public static final int ic_com_sina_weibo_sdk_login_with_account_text_normal=0x7f020016;
+        public static final int ic_com_sina_weibo_sdk_login_with_account_text_pressed=0x7f020017;
+        public static final int ic_com_sina_weibo_sdk_login_with_text=0x7f020018;
+        public static final int ic_com_sina_weibo_sdk_logo=0x7f020019;
+        public static final int ic_launcher=0x7f02001a;
+        public static final int load=0x7f02001b;
+        public static final int message_selected=0x7f02001c;
+        public static final int message_unselected=0x7f02001d;
+        public static final int news_selected=0x7f02001e;
+        public static final int news_unselected=0x7f02001f;
+        public static final int profile_selected=0x7f020020;
+        public static final int profile_unselected=0x7f020021;
+        public static final int setting_selected=0x7f020022;
+        public static final int setting_unselected=0x7f020023;
+        public static final int tab_bg=0x7f020024;
     }
     public static final class id {
         public static final int album=0x7f08001b;
@@ -74,7 +77,6 @@ public final class R {
         public static final int authimage=0x7f080000;
         public static final int content=0x7f080002;
         public static final int content_head=0x7f08001e;
-        public static final int content_pic=0x7f080021;
         public static final int content_text=0x7f080020;
         public static final int discover_image=0x7f08000a;
         public static final int discover_layout=0x7f080009;
@@ -94,7 +96,8 @@ public final class R {
         public static final int more=0x7f080018;
         public static final int my_weibolist=0x7f08001d;
         public static final int original=0x7f08001a;
-        public static final int photo=0x7f08000f;
+        public static final int photo=0x7f080010;
+        public static final int photo_list=0x7f080021;
         public static final int profile_image=0x7f08000d;
         public static final int profile_layout=0x7f08000c;
         public static final int profile_text=0x7f08000e;
@@ -102,16 +105,16 @@ public final class R {
         public static final int publish_time=0x7f08001f;
         public static final int user_name=0x7f080011;
         public static final int weibo_count=0x7f080015;
-        public static final int weibo_list=0x7f080010;
+        public static final int weibo_list=0x7f08000f;
     }
     public static final class layout {
         public static final int activity_auth=0x7f030000;
         public static final int activity_load=0x7f030001;
         public static final int activity_main=0x7f030002;
-        public static final int content_pic_item=0x7f030003;
-        public static final int discover_layout=0x7f030004;
-        public static final int home_layout=0x7f030005;
-        public static final int message_layout=0x7f030006;
+        public static final int discover_layout=0x7f030003;
+        public static final int home_layout=0x7f030004;
+        public static final int message_layout=0x7f030005;
+        public static final int photo_layout=0x7f030006;
         public static final int profile_layout=0x7f030007;
         public static final int status_item=0x7f030008;
     }

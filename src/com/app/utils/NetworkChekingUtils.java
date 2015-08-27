@@ -1,5 +1,5 @@
 /**
- * @(#)Utils.java
+ * @(#)NetworkChekingUtils.java
  * 
  * @Version: 1
  * @JDK: jdk 1.6.0.XXX
@@ -43,14 +43,14 @@ import android.net.NetworkInfo;
  * @author hanfei.li
  * @since 2011-11-5
  */
-public class Utils {
-	private static final String TAG = "Utils";
+public class NetworkChekingUtils {
+	private static final String TAG = "NetworkChekingUtils";
 
 	/**
 	 * 进行网络检测
 	 */
 	public static boolean checkNetwork(final Activity context) {
-		if (!Utils.isNetworkAvailable(context)) {
+		if (!NetworkChekingUtils.isNetworkAvailable(context)) {
 
 			AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 			dialog.setTitle("网络状况检查");
@@ -100,49 +100,12 @@ public class Utils {
 		return false;
 	}
 
-//	public static final SQLiteDatabase db = Connector.getDatabase();
-//
-//	public static void SaveUserToDatabase(User user) {
-//		
-//		UserInfo myUser = new UserInfo(user);
-//		myUser.save();
-//	}
+	// public static final SQLiteDatabase db = Connector.getDatabase();
+	//
+	// public static void SaveUserToDatabase(User user) {
+	//
+	// UserInfo myUser = new UserInfo(user);
+	// myUser.save();
+	// }
 
-	public static void sendHttpRequest(final String address, final HttpCallbackListener listener) {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				HttpURLConnection connection = null;
-				try {
-					URL url = new URL(address);
-					connection = (HttpsURLConnection) url.openConnection();
-					connection.setRequestMethod("Get");
-					connection.setReadTimeout(8000);
-					connection.setReadTimeout(8000);
-					connection.setDoInput(true);
-					connection.setDoOutput(true);
-					InputStream in = connection.getInputStream();
-					BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-					StringBuilder response = new StringBuilder();
-					String line;
-					while ((line = reader.readLine()) != null) {
-						response.append(line);
-					}
-					if (listener != null) {
-						listener.onFinish(response.toString());
-					}
-
-				} catch (Exception e) {
-					if (listener != null) {
-						listener.onError(e);
-					}
-				} finally {
-					if (connection != null) {
-						connection.disconnect();
-					}
-				}
-			}
-		}).start();
-
-	}
 }

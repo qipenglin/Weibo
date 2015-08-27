@@ -27,12 +27,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 @SuppressLint("UseValueOf")
-public class ProfileFragment extends Fragment {
+public class ProfileFragment extends Fragment{
 
 	private static final String TAG = "ProfileFragment";
 
@@ -168,4 +169,40 @@ public class ProfileFragment extends Fragment {
 		}
 		return settingLayout;
 	}
+
+//	@Override
+//	public void onClick(View v) {
+//		switch (v.getId()) {
+//		case R.id.all_weibo:
+//			// 当点击了消息tab时，选中第1个tab
+//			setTabSelection(0);
+//			break;
+//		case R.id.original:
+//			// 当点击了联系人tab时，选中第2个tab
+//			setTabSelection(1);
+//			break;
+//		case R.id.album:
+//			// 当点击了动态tab时，选中第3个tab
+//			break;
+//		case R.id.favourite:
+//			// 当点击了设置tab时，选中第4个tab
+//			break;
+//		default:
+//			break;
+//		}
+//		
+//	}
+
+//	private void setTabSelection(int i) {
+//		StringBuffer address = new StringBuffer("");
+//		switch (i) {
+//		case 0:
+//			address.append("https://api.weibo.com/2/statuses/user_timeline.json");
+//			break;
+//		default:
+//			address.append(b)
+//			break;
+//		}
+//		
+//	}
 }

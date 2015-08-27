@@ -11,10 +11,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.app.utils.DateUtil;
+import com.app.view.NoScrollGridView;
 import com.app.weibo.R;
 import com.sina.weibo.sdk.openapi.models.Status;
 
@@ -25,6 +31,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.text.format.DateUtils;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -98,10 +106,15 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 
 		String profile_image_url = status.user.profile_image_url;
 		String user_name = status.user.name;
-		String creat_at = status.created_at;
+		String created_at = status.created_at;
+		
+		Log.d("main", created_at);
+		Date creat_Date = DateUtil.parseStringToDate(created_at);
+		Date curDate = new Date(System.currentTimeMillis());// 获取当前时间
+		String time = DateUtil.twoDateDistance(creat_Date, curDate);
 
 		String content_text = status.text;
-		List<String> pic_urls = status.pic_urls;
+		ArrayList<String> pic_urls = status.pic_urls;
 		View view;
 		if (convertView == null) {
 			view = LayoutInflater.from(getContext()).inflate(R.layout.status_item, null);
@@ -117,14 +130,14 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 		loadBitmaps(profile_image_imageView, profile_image_url);
 		profile_image_imageView.setTag(profile_image_url);
 		user_name_textView.setText(user_name);
-		creat_at_textView.setText(creat_at);
+		creat_at_textView.setText(time);
 		text_textView.setText(content_text);
 
-		// NoScrollGridView gridView = (NoScrollGridView)
-		// view.findViewById(R.id.content_pic);
-		// PictureAdapter pictureAdapter = new PictureAdapter(getContext(), 0,
-		// pic_urls, gridView);
-		// gridView.setAdapter(pictureAdapter);
+//		if (!pic_urls.isEmpty()) {
+//			NoScrollGridView mNoScrollGridView = (NoScrollGridView) view.findViewById(R.id.photo_list);
+//			PhotoWallAdapter mPhotoWallAdapter = new PhotoWallAdapter(getContext(), 0, pic_urls, mNoScrollGridView);
+//			mNoScrollGridView.setAdapter(mPhotoWallAdapter);
+//		}
 
 		return view;
 	}
