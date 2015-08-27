@@ -1,21 +1,41 @@
 package com.app.activity;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.litepal.tablemanager.Connector;
+
 import com.app.fragment.DiscoverFragment;
 import com.app.fragment.HomeFragment;
 import com.app.fragment.MessageFragment;
 import com.app.fragment.ProfileFragment;
+import com.app.model.StatusInfo;
+import com.app.utils.AccessTokenKeeper;
+import com.app.utils.Constants;
 import com.app.weibo.R;
+import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.sina.weibo.sdk.exception.WeiboException;
+import com.sina.weibo.sdk.net.RequestListener;
+import com.sina.weibo.sdk.openapi.StatusesAPI;
+import com.sina.weibo.sdk.openapi.models.ErrorInfo;
+import com.sina.weibo.sdk.openapi.models.Status;
+import com.sina.weibo.sdk.openapi.models.StatusList;
+import com.sina.weibo.sdk.utils.LogUtil;
 
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 项目的主Activity，所有的Fragment都嵌入在这里。
@@ -23,6 +43,8 @@ import android.widget.TextView;
  * @author guolin
  */
 public class MainActivity extends Activity implements OnClickListener {
+
+	private static String TAG = "MainActivity";
 
 	/**
 	 * 用于展示消息的Fragment
@@ -116,6 +138,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		setContentView(R.layout.activity_main);
 		// 初始化布局元素
 		initViews();
+		
 		fragmentManager = getFragmentManager();
 		// 第一次启动时选中第0个tab
 		setTabSelection(0);

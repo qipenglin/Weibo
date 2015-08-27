@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.litepal.crud.DataSupport;
 
+import com.app.utils.DateUtil;
 import com.sina.weibo.sdk.openapi.models.Geo;
 import com.sina.weibo.sdk.openapi.models.Status;
 import com.sina.weibo.sdk.openapi.models.User;
@@ -12,9 +13,9 @@ import com.sina.weibo.sdk.openapi.models.Visible;
 public class StatusInfo extends DataSupport {
 
 	/** 微博创建时间 */
-	private String created_at;
+	private long created_at;
 	/** 微博ID */
-	private String id;
+	private String statusId;
 	/** 微博MID */
 	private String mid;
 	/** 字符串型的微博ID */
@@ -42,9 +43,9 @@ public class StatusInfo extends DataSupport {
 	/** 地理信息字段 */
 	private Geo geo;
 	/** 微博作者的用户信息字段 */
-	private User user;
+	private UserInfo userInfo;
 	/** 被转发的原微博信息字段，当该微博为转发微博时返回 */
-	private Status retweeted_status;
+	Status retweeted_status;
 	/** 转发数 */
 	private int reposts_count;
 	/** 评论数 */
@@ -57,26 +58,26 @@ public class StatusInfo extends DataSupport {
 	 * 微博的可见性及指定可见分组信息。该 object 中 type 取值， 0：普通微博，1：私密微博，3：指定分组微博，4：密友微博；
 	 * list_id为分组的组号
 	 */
-	private Visible visible;
+	Visible visible;
 	/** 微博配图地址。多图时返回多图链接。无配图返回"[]" */
-	private ArrayList<String> pic_urls;
+	ArrayList<String> pic_urls;
 
 	/** 微博流内的推广微博ID */
 	// private Ad ad;
-	public String getCreated_at() {
+	public long getCreated_at() {
 		return created_at;
 	}
 
-	public void setCreated_at(String created_at) {
+	public void setCreated_at(long created_at) {
 		this.created_at = created_at;
 	}
 
-	public String getId() {
-		return id;
+	public String getStatusId() {
+		return statusId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setStatusId(String statusId) {
+		this.statusId = statusId;
 	}
 
 	public String getMid() {
@@ -183,12 +184,12 @@ public class StatusInfo extends DataSupport {
 		this.geo = geo;
 	}
 
-	public User getUser() {
-		return user;
+	public UserInfo getUserInfo() {
+		return userInfo;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUser(UserInfo userInfo) {
+		this.userInfo = userInfo;
 	}
 
 	public Status getRetweeted_status() {
@@ -247,9 +248,9 @@ public class StatusInfo extends DataSupport {
 		this.pic_urls = pic_urls;
 	}
 
-	StatusInfo(Status status) {
-		created_at = status.created_at;
-		id = status.id;
+	public StatusInfo(Status status) {
+		created_at = DateUtil.parseStringToDate(status.created_at).getTime();
+		statusId = status.id;
 		mid = status.mid;
 		idstr = status.idstr;
 		text = status.text;
@@ -263,7 +264,7 @@ public class StatusInfo extends DataSupport {
 		bmiddle_pic = status.bmiddle_pic;
 		original_pic = status.original_pic;
 		geo = status.geo;
-		user = status.user;
+		userInfo = new UserInfo(status.user);
 		retweeted_status = status.retweeted_status;
 		reposts_count = status.reposts_count;
 		comments_count = status.comments_count;
@@ -273,32 +274,32 @@ public class StatusInfo extends DataSupport {
 		pic_urls = status.pic_urls;
 	}
 
-	public Status GetStatus(StatusInfo statusInfo) {
-		Status status = new Status();
-		status.created_at = status.created_at;
-		status.id = statusInfo.id;
-		status.mid = statusInfo.mid;
-		status.idstr = statusInfo.idstr;
-		status.text = statusInfo.text;
-		status.source = statusInfo.source;
-		status.favorited = statusInfo.favorited;
-		status.truncated = statusInfo.truncated;
-		status.in_reply_to_status_id = statusInfo.in_reply_to_status_id;
-		status.in_reply_to_user_id = statusInfo.in_reply_to_user_id;
-		status.in_reply_to_screen_name = statusInfo.in_reply_to_screen_name;
-		status.thumbnail_pic = statusInfo.thumbnail_pic;
-		status.bmiddle_pic = statusInfo.bmiddle_pic;
-		status.original_pic = statusInfo.original_pic;
-		status.geo = statusInfo.geo;
-		status.user = statusInfo.user;
-		status.retweeted_status = statusInfo.retweeted_status;
-		status.reposts_count = statusInfo.reposts_count;
-		status.comments_count = statusInfo.comments_count;
-		status.attitudes_count = statusInfo.attitudes_count;
-		status.mlevel = statusInfo.mlevel;
-		status.visible = statusInfo.visible;
-		status.pic_urls = statusInfo.pic_urls;
-		return status;
-	}
+	// public Status GetStatus(StatusInfo statusInfo) {
+	// Status status = new Status();
+	// status.created_at = status.created_at;
+	// status.id = statusInfo.id;
+	// status.mid = statusInfo.mid;
+	// status.idstr = statusInfo.idstr;
+	// status.text = statusInfo.text;
+	// status.source = statusInfo.source;
+	// status.favorited = statusInfo.favorited;
+	// status.truncated = statusInfo.truncated;
+	// status.in_reply_to_status_id = statusInfo.in_reply_to_status_id;
+	// status.in_reply_to_user_id = statusInfo.in_reply_to_user_id;
+	// status.in_reply_to_screen_name = statusInfo.in_reply_to_screen_name;
+	// status.thumbnail_pic = statusInfo.thumbnail_pic;
+	// status.bmiddle_pic = statusInfo.bmiddle_pic;
+	// status.original_pic = statusInfo.original_pic;
+	// status.geo = statusInfo.geo;
+	// status.user = statusInfo.user;
+	// status.retweeted_status = statusInfo.retweeted_status;
+	// status.reposts_count = statusInfo.reposts_count;
+	// status.comments_count = statusInfo.comments_count;
+	// status.attitudes_count = statusInfo.attitudes_count;
+	// status.mlevel = statusInfo.mlevel;
+	// status.visible = statusInfo.visible;
+	// status.pic_urls = statusInfo.pic_urls;
+	// return status;
+	// }
 
 }

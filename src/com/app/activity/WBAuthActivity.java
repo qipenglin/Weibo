@@ -1,18 +1,11 @@
 package com.app.activity;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.Window;
-import android.widget.ImageView;
-import android.widget.Toast;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.litepal.tablemanager.Connector;
 
+import com.app.model.StatusInfo;
 import com.app.model.UserInfo;
 import com.app.utils.AccessTokenKeeper;
 import com.app.utils.Constants;
@@ -23,20 +16,37 @@ import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
+import com.sina.weibo.sdk.openapi.StatusesAPI;
 import com.sina.weibo.sdk.openapi.UsersAPI;
 import com.sina.weibo.sdk.openapi.models.ErrorInfo;
+import com.sina.weibo.sdk.openapi.models.Status;
+import com.sina.weibo.sdk.openapi.models.StatusList;
 import com.sina.weibo.sdk.openapi.models.User;
+import com.sina.weibo.sdk.utils.LogUtil;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.Window;
+import android.widget.Toast;
 
 public class WBAuthActivity extends Activity {
 
-	private static final String TAG = "weibosdk";
+	private static final String TAG = "WBActivity";
+
+	private ArrayList<Status> statusList;
 
 	/** 显示认证后的信息，如 AccessToken */
 	private AuthInfo mAuthInfo;
 
 	/** 封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能 */
 	private Oauth2AccessToken mAccessToken;
-
+	/** 用于获取微博信息流等操作的API */
+	private StatusesAPI mStatusesAPI;
 	/** 注意：SsoHandler 仅当 SDK 支持 SSO 时有效 */
 	private SsoHandler mSsoHandler;
 
@@ -46,6 +56,7 @@ public class WBAuthActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_auth);
 
+		SQLiteDatabase db = Connector.getDatabase();
 		// 快速授权时，请不要传入 SCOPE，否则可能会授权不成功
 		mAuthInfo = new AuthInfo(this, Constants.APP_KEY, Constants.REDIRECT_URL, Constants.SCOPE);
 		mSsoHandler = new SsoHandler(WBAuthActivity.this, mAuthInfo);
@@ -85,10 +96,56 @@ public class WBAuthActivity extends Activity {
 			if (mAccessToken.isSessionValid()) {
 				// 保存 Token 到 SharedPreferences
 				AccessTokenKeeper.writeAccessToken(WBAuthActivity.this, mAccessToken);
+
 				UsersAPI mUsersAPI = new UsersAPI(WBAuthActivity.this, Constants.APP_KEY, mAccessToken);
 				long uid = Long.parseLong(mAccessToken.getUid());
-				mUsersAPI.show(uid, mListener);
+				mUsersAPI.show(uid, new RequestListener() {
+					@Override
+					public void onComplete(String response) {
+						if (!TextUtils.isEmpty(response)) {
+							// 调用 User#parse 将JSON串解析成User对象
+							User user = User.parse(response);
+							if (user != null) {
+								UserInfo mUserInfo = new UserInfo(user);
+								mUserInfo.save();
+							}
+						}
+					}
+
+					@Override
+					public void onWeiboException(WeiboException e) {
+						ErrorInfo info = ErrorInfo.parse(e.getMessage());
+						Toast.makeText(WBAuthActivity.this, info.toString(), Toast.LENGTH_LONG).show();
+					}
+				});
+
 				Toast.makeText(WBAuthActivity.this, "认证成功", Toast.LENGTH_SHORT).show();
+
+				// mStatusesAPI = new StatusesAPI(WBAuthActivity.this,
+				// Constants.APP_KEY, mAccessToken);
+				// mStatusesAPI.friendsTimeline(0L, 0L, 100, 1, false, 0, false,
+				// new RequestListener() {
+				// @Override
+				// public void onComplete(String response) {
+				// if (!TextUtils.isEmpty(response)) {
+				// statusList = StatusList.parse(response).statusList;
+				// Iterator<Status> statusIterator = statusList.iterator();
+				// while (statusIterator.hasNext()) {
+				// Status status = statusIterator.next();
+				// StatusInfo statusInfo = new StatusInfo(status);
+				// statusInfo.save();
+				// }
+				// }
+				// }
+				//
+				// @Override
+				// public void onWeiboException(WeiboException e) {
+				// LogUtil.e(TAG, e.getMessage());
+				// ErrorInfo info = ErrorInfo.parse(e.getMessage());
+				// Toast.makeText(WBAuthActivity.this, info.toString(),
+				// Toast.LENGTH_LONG).show();
+				// }
+				// });
 				startActivity(new Intent(WBAuthActivity.this, MainActivity.class));
 			} else {
 				// 以下几种情况，您会收到 Code：
@@ -114,29 +171,4 @@ public class WBAuthActivity extends Activity {
 			Toast.makeText(WBAuthActivity.this, "Auth exception : " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 	}
-
-	private RequestListener mListener = new RequestListener() {
-		@Override
-		public void onComplete(String response) {
-			if (!TextUtils.isEmpty(response)) {
-				// 调用 User#parse 将JSON串解析成User对象
-				User user = User.parse(response);
-				if (user != null) {
-					SQLiteDatabase db = Connector.getDatabase();
-					if (db != null) {
-						UserInfo mUserInfo = new UserInfo(user);
-						mUserInfo.save();
-						finish();
-					}
-				}
-			}
-		}
-
-		@Override
-		public void onWeiboException(WeiboException e) {
-			ErrorInfo info = ErrorInfo.parse(e.getMessage());
-			Toast.makeText(WBAuthActivity.this, info.toString(), Toast.LENGTH_LONG).show();
-		}
-	};
-
 }

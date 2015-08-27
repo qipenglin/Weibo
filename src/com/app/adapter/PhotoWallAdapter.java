@@ -13,6 +13,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.app.weibo.R;
@@ -66,8 +67,7 @@ public class PhotoWallAdapter extends ArrayAdapter<String> {
 	 */
 	private int mItemHeight = 0;
 
-	public PhotoWallAdapter(Context context, int textViewResourceId, ArrayList<String> objects,
-			GridView photoWall) {
+	public PhotoWallAdapter(Context context, int textViewResourceId, List<String> objects, GridView photoWall) {
 		super(context, textViewResourceId, objects);
 		mPhotoWall = photoWall;
 		taskCollection = new HashSet<BitmapWorkerTask>();
@@ -88,8 +88,7 @@ public class PhotoWallAdapter extends ArrayAdapter<String> {
 				cacheDir.mkdirs();
 			}
 			// 创建DiskLruCache实例，初始化缓存数据
-			mDiskLruCache = DiskLruCache
-					.open(cacheDir, getAppVersion(context), 1, 10 * 1024 * 1024);
+			mDiskLruCache = DiskLruCache.open(cacheDir, getAppVersion(context), 1, 10 * 1024 * 1024);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -100,11 +99,13 @@ public class PhotoWallAdapter extends ArrayAdapter<String> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		String url = getItem(position);
 		View view = LayoutInflater.from(getContext()).inflate(R.layout.photo_layout, null);
-//		if (convertView == null) {
-//			view = LayoutInflater.from(getContext()).inflate(R.layout.photo_layout, null);
-//		} else {
-//			view = convertView;
-//		}
+		// if (convertView == null) {
+		// view =
+		// LayoutInflater.from(getContext()).inflate(R.layout.photo_layout,
+		// null);
+		// } else {
+		// view = convertView;
+		// }
 		final ImageView imageView = (ImageView) view.findViewById(R.id.photo);
 		if (imageView.getLayoutParams().height != mItemHeight) {
 			imageView.getLayoutParams().height = mItemHeight;
@@ -192,8 +193,7 @@ public class PhotoWallAdapter extends ArrayAdapter<String> {
 	 */
 	public int getAppVersion(Context context) {
 		try {
-			PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(),
-					0);
+			PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
 			return info.versionCode;
 		} catch (NameNotFoundException e) {
 			e.printStackTrace();
@@ -226,7 +226,7 @@ public class PhotoWallAdapter extends ArrayAdapter<String> {
 		}
 		return cacheKey;
 	}
-	
+
 	/**
 	 * 将缓存记录同步到journal文件中。
 	 */

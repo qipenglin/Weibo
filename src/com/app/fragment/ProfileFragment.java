@@ -1,10 +1,12 @@
 package com.app.fragment;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.litepal.crud.DataSupport;
 
-import com.app.adapter.StatusAdapter;
+import com.app.adapter.StatusInfoAdapter;
+import com.app.model.StatusInfo;
 import com.app.model.UserInfo;
 import com.app.utils.AccessTokenKeeper;
 import com.app.utils.Constants;
@@ -19,7 +21,6 @@ import com.sina.weibo.sdk.openapi.models.Status;
 import com.sina.weibo.sdk.openapi.models.StatusList;
 import com.sina.weibo.sdk.utils.LogUtil;
 
-import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,13 +28,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-@SuppressLint("UseValueOf")
-public class ProfileFragment extends Fragment{
+public class ProfileFragment extends Fragment {
 
 	private static final String TAG = "ProfileFragment";
 
@@ -41,11 +40,11 @@ public class ProfileFragment extends Fragment{
 
 	private ArrayList<Status> statusList;
 
-	private StatusAdapter statusAdapter;
+	private ArrayList<StatusInfo> statusInfoList;
+
+	private StatusInfoAdapter statusInfoAdapter;
 
 	private NoScrollListView mNoScrollListView;
-
-	private StatusesAPI mStatusesAPI;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,36 +56,35 @@ public class ProfileFragment extends Fragment{
 		Toast.makeText(getActivity(), currentUser.getProvince() + "", Toast.LENGTH_LONG).show();
 
 		TextView user_name_TextView = (TextView) settingLayout.findViewById(R.id.user_name);
-		
+
 		user_name_TextView.setText(currentUser.getScreen_name());
 
 		TextView gender_Text = (TextView) settingLayout.findViewById(R.id.gender);
-		
+
 		gender_Text.setText(currentUser.getGender());
 
 		TextView province_TextView = (TextView) settingLayout.findViewById(R.id.province);
-		
+
 		province_TextView.setText(new Integer(currentUser.getProvince()).toString());
 
 		ImageView head_ImageView = (ImageView) settingLayout.findViewById(R.id.head);
-		
+
 		head_ImageView.setImageResource(R.drawable.ic_launcher);
 
 		TextView weibo_Count_TextView = (TextView) settingLayout.findViewById(R.id.weibo_count);
-		
+
 		weibo_Count_TextView.setText(new Integer(currentUser.getStatuses_count()).toString() + '\n' + "Weibo");
 
 		TextView following_count_TextView = (TextView) settingLayout.findViewById(R.id.following_count);
-		
+
 		following_count_TextView.setText(new Integer(currentUser.getFriends_count()).toString() + '\n' + "Following");
 
 		TextView follower_count_TextView = (TextView) settingLayout.findViewById(R.id.follower_count);
-		
-		follower_count_TextView
-				.setText(new Integer(currentUser.getBi_followers_count()).toString() + '\n' + "Follower");
+
+		follower_count_TextView.setText(new Integer(currentUser.getBi_followers_count()).toString() + '\n' + "Follower");
 
 		TextView more_TextView = (TextView) settingLayout.findViewById(R.id.more);
-		
+
 		more_TextView.setText("More");
 
 		TextView all_TextView = (TextView) settingLayout.findViewById(R.id.all_weibo);
@@ -101,11 +99,11 @@ public class ProfileFragment extends Fragment{
 
 		mAccessToken = AccessTokenKeeper.readAccessToken(getActivity());
 
-		mStatusesAPI = new StatusesAPI(getActivity(), Constants.APP_KEY, mAccessToken);
+		statusInfoList = new ArrayList<StatusInfo>();
 
 		if (mAccessToken == null)
 			Toast.makeText(getActivity(), "没有获取到密钥", Toast.LENGTH_LONG).show();
-		
+
 		if (mAccessToken != null && mAccessToken.isSessionValid()) {
 			String address = "https://api.weibo.com/2/statuses/user_timeline.json";
 			String access_token = mAccessToken.getToken();
@@ -115,13 +113,18 @@ public class ProfileFragment extends Fragment{
 				public void onFinish(String response) {
 					if (!TextUtils.isEmpty(response)) {
 						statusList = StatusList.parse(response).statusList;
+						statusList = StatusList.parse(response).statusList;
+						Iterator<Status> statusIterator = statusList.iterator();
+						while (statusIterator.hasNext()) {
+							statusInfoList.add(new StatusInfo(statusIterator.next()));
+						}
 					}
 					if (!statusList.isEmpty()) {
-						statusAdapter = new StatusAdapter(getActivity(), 0, statusList, mNoScrollListView);
+						statusInfoAdapter = new StatusInfoAdapter(getActivity(), 0, statusInfoList, mNoScrollListView);
 						getActivity().runOnUiThread(new Runnable() {
 							@Override
 							public void run() {
-								mNoScrollListView.setAdapter(statusAdapter);
+								mNoScrollListView.setAdapter(statusInfoAdapter);
 							}
 						});
 					}
@@ -170,39 +173,39 @@ public class ProfileFragment extends Fragment{
 		return settingLayout;
 	}
 
-//	@Override
-//	public void onClick(View v) {
-//		switch (v.getId()) {
-//		case R.id.all_weibo:
-//			// 当点击了消息tab时，选中第1个tab
-//			setTabSelection(0);
-//			break;
-//		case R.id.original:
-//			// 当点击了联系人tab时，选中第2个tab
-//			setTabSelection(1);
-//			break;
-//		case R.id.album:
-//			// 当点击了动态tab时，选中第3个tab
-//			break;
-//		case R.id.favourite:
-//			// 当点击了设置tab时，选中第4个tab
-//			break;
-//		default:
-//			break;
-//		}
-//		
-//	}
+	// @Override
+	// public void onClick(View v) {
+	// switch (v.getId()) {
+	// case R.id.all_weibo:
+	// // 当点击了消息tab时，选中第1个tab
+	// setTabSelection(0);
+	// break;
+	// case R.id.original:
+	// // 当点击了联系人tab时，选中第2个tab
+	// setTabSelection(1);
+	// break;
+	// case R.id.album:
+	// // 当点击了动态tab时，选中第3个tab
+	// break;
+	// case R.id.favourite:
+	// // 当点击了设置tab时，选中第4个tab
+	// break;
+	// default:
+	// break;
+	// }
+	//
+	// }
 
-//	private void setTabSelection(int i) {
-//		StringBuffer address = new StringBuffer("");
-//		switch (i) {
-//		case 0:
-//			address.append("https://api.weibo.com/2/statuses/user_timeline.json");
-//			break;
-//		default:
-//			address.append(b)
-//			break;
-//		}
-//		
-//	}
+	// private void setTabSelection(int i) {
+	// StringBuffer address = new StringBuffer("");
+	// switch (i) {
+	// case 0:
+	// address.append("https://api.weibo.com/2/statuses/user_timeline.json");
+	// break;
+	// default:
+	// address.append(b)
+	// break;
+	// }
+	//
+	// }
 }

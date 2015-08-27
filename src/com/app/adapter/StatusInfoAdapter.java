@@ -11,18 +11,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.app.model.StatusInfo;
+import com.app.model.UserInfo;
 import com.app.utils.DateUtil;
-import com.app.view.NoScrollGridView;
 import com.app.weibo.R;
-import com.sina.weibo.sdk.openapi.models.Status;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -31,7 +29,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Environment;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
@@ -49,7 +46,7 @@ import libcore.io.DiskLruCache.Snapshot;
  * 
  * @author guolin
  */
-public class StatusAdapter extends ArrayAdapter<Status> {
+public class StatusInfoAdapter extends ArrayAdapter<StatusInfo> {
 
 	/**
 	 * 记录所有正在下载或等待下载的任务。
@@ -71,9 +68,8 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 	 */
 	private ListView mListView;
 
-	public StatusAdapter(Context context, int textViewResourceId, List<Status> statusList, ListView listView) {
-		super(context, textViewResourceId, statusList);
-
+	public StatusInfoAdapter(Context context, int textViewResourceId, List<StatusInfo> statusInfoList, ListView listView) {
+		super(context, textViewResourceId, statusInfoList);
 		mListView = listView;
 
 		taskCollection = new HashSet<BitmapWorkerTask>();
@@ -102,19 +98,18 @@ public class StatusAdapter extends ArrayAdapter<Status> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Status status = getItem(position);
-
-		String profile_image_url = status.user.profile_image_url;
-		String user_name = status.user.name;
-		String created_at = status.created_at;
+		StatusInfo statusInfo = getItem(position);
+		UserInfo userInfo = statusInfo.getUserInfo();
+		String profile_image_url = userInfo.getProfile_image_url();
+		String user_name =userInfo.getName();
+		long created_at = statusInfo.getCreated_at();
 		
-		Log.d("main", created_at);
-		Date creat_Date = DateUtil.parseStringToDate(created_at);
+		Date creat_Date = new Date(created_at);
 		Date curDate = new Date(System.currentTimeMillis());// 获取当前时间
 		String time = DateUtil.twoDateDistance(creat_Date, curDate);
 
-		String content_text = status.text;
-		ArrayList<String> pic_urls = status.pic_urls;
+		String content_text =statusInfo.getText();
+		ArrayList<String> pic_urls = statusInfo.getPic_urls();
 		View view;
 		if (convertView == null) {
 			view = LayoutInflater.from(getContext()).inflate(R.layout.status_item, null);

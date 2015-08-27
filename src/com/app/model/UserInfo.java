@@ -67,7 +67,7 @@ public class UserInfo extends DataSupport {
 	/** 认证原因 */
 	private String verified_reason;
 	/** 该用户是否关注当前登录用户，true：是，false：否 */
-	boolean follow_me;
+	private boolean follow_me;
 	/** 用户的在线状态，0：不在线、1：在线 */
 	private int online_status;
 	/** 用户的互粉数 */
